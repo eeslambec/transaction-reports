@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.transactionreports.dto.AttachmentDto;
 import uz.pdp.transactionreports.entity.Attachment;
+import uz.pdp.transactionreports.exception.InvalidArgumentException;
 import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.repository.AttachmentRepository;
 import uz.pdp.transactionreports.service.AttachmentService;
+import uz.pdp.transactionreports.utils.enums.AttachmentStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .type(request.getContentType())
                 .size(request.getSize())
                 .path(path.toString())
+                .attachmentStatus(AttachmentStatus.UPLOADED)
                 .build();
 
         Files.createDirectories(BASE_PATH);
@@ -41,10 +44,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try (var inputStream = request.getInputStream()) {
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
         }
-
-        Attachment savedAttachment = attachmentRepository.save(attachment);
-
-        return new AttachmentDto(savedAttachment);
+        return new AttachmentDto(attachment);
     }
 
 
@@ -63,13 +63,14 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         Files.deleteIfExists(path);
 
-        attachmentRepository.deleteById(id);
+        attachment.setAttachmentStatus(AttachmentStatus.DELETED);
+        attachmentRepository.save(attachment);
     }
 
     private String getExtension(String contentType) {
         if (contentType != null) {
             return "." + contentType.substring(contentType.indexOf("/") + 1);
         }
-        return ".jpg";
+        throw new InvalidArgumentException("Invalid file type");
     }
 }

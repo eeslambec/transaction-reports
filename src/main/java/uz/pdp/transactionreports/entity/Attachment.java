@@ -2,6 +2,7 @@ package uz.pdp.transactionreports.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.pdp.transactionreports.utils.enums.AttachmentStatus;
 
 import java.util.UUID;
 
@@ -21,4 +22,5 @@ public class Attachment {
     private String type;
     private Long size;
     private String path;
+    private AttachmentStatus attachmentStatus;
 }

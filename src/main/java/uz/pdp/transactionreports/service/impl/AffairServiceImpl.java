@@ -2,6 +2,7 @@ package uz.pdp.transactionreports.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.pdp.transactionreports.dto.AffairDto;
 import uz.pdp.transactionreports.entity.Affair;
 import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.repository.AffairRepository;
@@ -17,19 +18,19 @@ public class AffairServiceImpl implements AffairService {
     private final AffairRepository affairRepository;
 
     @Override
-    public Affair create(String name) {
-        return affairRepository.save(Affair.builder()
+    public AffairDto create(String name) {
+        return new AffairDto(affairRepository.save(Affair.builder()
                 .name(name)
-                .build());
+                .build()));
     }
 
     @Override
-    public Affair update(Affair affair) {
+    public AffairDto update(AffairDto affair) {
         Affair oldAffair = affairRepository.findById(affair.getId()).orElseThrow(
                 () -> new NotFoundException("Affair"));
-        return affairRepository.save(Affair.builder()
+        return new AffairDto(affairRepository.save(Affair.builder()
                 .name(Validations.requireNonNullElse(affair.getName(), oldAffair.getName()))
-                .build());
+                .build()));
     }
 
     @Override

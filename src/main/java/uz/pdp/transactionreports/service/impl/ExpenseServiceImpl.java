@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.pdp.transactionreports.dto.ExpenseDto;
 import uz.pdp.transactionreports.entity.Expense;
 import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.repository.ExpenseRepository;
@@ -19,19 +20,19 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
 
     @Override
-    public Expense create(@NotBlank String name) {
-        return expenseRepository.save(Expense.builder()
+    public ExpenseDto create(@NotBlank String name) {
+        return new ExpenseDto(expenseRepository.save(Expense.builder()
                 .name(name)
-                .build());
+                .build()));
     }
 
     @Override
-    public Expense update(@NotNull Expense expense) {
+    public ExpenseDto update(@NotNull ExpenseDto expense) {
         Expense oldExpense = expenseRepository.findById(expense.getId()).orElseThrow(
                 () -> new NotFoundException("Expense"));
-        return expenseRepository.save(Expense.builder()
+        return new ExpenseDto(expenseRepository.save(Expense.builder()
                 .name(Validations.requireNonNullElse(expense.getName(), oldExpense.getName()))
-                .build());
+                .build()));
     }
 
     @Override
