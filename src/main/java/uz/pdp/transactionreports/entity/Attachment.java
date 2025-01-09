@@ -17,5 +17,8 @@ public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    private String originalName;
+    private String type;
+    private Long size;
+    private String path;
 }

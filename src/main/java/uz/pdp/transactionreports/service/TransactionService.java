@@ -14,7 +14,8 @@ public interface TransactionService {
     TransactionExpenseDto createExpense(TransactionExpenseDto transactionExpenseDto);
     void deleteById(UUID id);
     Transaction getById(UUID id);
-    List<Transaction> getAll();
+    List<Transaction> getAllCompleted();
+    List<Transaction> getAllDeleted();
     List<Transaction> getAllIncomes();
     List<Transaction> getAllExpenses();
 }

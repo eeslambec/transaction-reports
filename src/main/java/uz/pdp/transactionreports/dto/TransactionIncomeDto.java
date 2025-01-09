@@ -9,7 +9,6 @@ import uz.pdp.transactionreports.entity.Attachment;
 import uz.pdp.transactionreports.entity.Customer;
 import uz.pdp.transactionreports.entity.Transaction;
 import uz.pdp.transactionreports.utils.enums.Currency;
-import uz.pdp.transactionreports.utils.enums.ExpenseCategory;
 import uz.pdp.transactionreports.utils.enums.TransactionCategory;
 
 import java.math.BigDecimal;

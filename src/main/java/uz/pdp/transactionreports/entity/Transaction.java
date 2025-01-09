@@ -5,6 +5,7 @@ import lombok.*;
 import uz.pdp.transactionreports.utils.enums.Currency;
 import uz.pdp.transactionreports.utils.enums.ExpenseCategory;
 import uz.pdp.transactionreports.utils.enums.TransactionCategory;
+import uz.pdp.transactionreports.utils.enums.TransactionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,4 +36,5 @@ public class Transaction {
     private String description;
     @OneToOne
     private Attachment attachment;
+    private TransactionStatus transactionStatus;
 }
