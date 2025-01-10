@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import uz.pdp.transactionreports.entity.Attachment;
+import uz.pdp.transactionreports.utils.enums.AttachmentStatus;
 
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public class AttachmentDto {
     private String type;
     private Long size;
     private String path;
+    private AttachmentStatus attachmentStatus;
 
     public AttachmentDto(Attachment attachment) {
         this.id = attachment.getId();
@@ -23,5 +25,6 @@ public class AttachmentDto {
         this.type = attachment.getType();
         this.size = attachment.getSize();
         this.path = attachment.getPath();
+        this.attachmentStatus = attachment.getAttachmentStatus();
     }
 }

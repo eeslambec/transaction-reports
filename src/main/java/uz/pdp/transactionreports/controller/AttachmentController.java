@@ -1,9 +1,12 @@
 package uz.pdp.transactionreports.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.pdp.transactionreports.dto.AttachmentDto;
 import uz.pdp.transactionreports.service.AttachmentService;
 
 import java.io.IOException;
@@ -15,9 +18,14 @@ import java.util.UUID;
 public class AttachmentController {
     private final AttachmentService attachmentService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestBody MultipartFile file) throws IOException {
-        return ResponseEntity.ok(attachmentService.upload(file));
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AttachmentDto> upload(@RequestParam("file") MultipartFile file) {
+        try {
+            AttachmentDto attachmentDto = attachmentService.upload(file);
+            return new ResponseEntity<>(attachmentDto, HttpStatus.CREATED);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
     @GetMapping("/get/id/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {

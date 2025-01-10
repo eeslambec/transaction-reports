@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import uz.pdp.transactionreports.entity.Affair;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,5 +22,5 @@ public class CustomerCRUDDto {
     @NotBlank
     private String phoneNumber;
     @NotNull
-    private Affair affair;
+    private UUID affairId;
 }

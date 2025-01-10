@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.pdp.transactionreports.dto.CustomerCRUDDto;
 import uz.pdp.transactionreports.dto.CustomerUpdateDto;
+import uz.pdp.transactionreports.entity.Affair;
 import uz.pdp.transactionreports.entity.Customer;
 import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.repository.CustomerRepository;
+import uz.pdp.transactionreports.service.AffairService;
 import uz.pdp.transactionreports.service.CustomerService;
 import uz.pdp.transactionreports.utils.Validations;
 
@@ -17,14 +19,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final AffairService affairService;
 
     @Override
     public Customer create(CustomerCRUDDto customerCRUDDto) {
+        Affair byId = affairService.getById(customerCRUDDto.getAffairId());
         return customerRepository.save(Customer.builder()
                 .firstName(customerCRUDDto.getFirstName())
                 .lastName(customerCRUDDto.getLastName())
                 .middleName(customerCRUDDto.getMiddleName())
-                .affair(customerCRUDDto.getAffair())
+                .affair(byId)
                 .phoneNumber(customerCRUDDto.getPhoneNumber())
                 .build());
     }

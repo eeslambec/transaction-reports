@@ -40,7 +40,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .build();
 
         Files.createDirectories(BASE_PATH);
-
+        attachmentRepository.save(attachment);
         try (var inputStream = request.getInputStream()) {
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
         }
