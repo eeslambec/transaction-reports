@@ -6,5 +6,11 @@ spring:
     password: 1427
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
+jwt:
+  token:
+    secret:
+      expiry: 604800000
+      key: SGkuIFRoaXMgaXMgc2VjcmV0IGtleSBmb3IgSldUIGZyb20gdHJhbnNhY3Rpb24tcmVwb3J0cyBwcm9qZWN0LiBCeTogZWVzbGFtYmVj
+

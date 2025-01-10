@@ -1,12 +1,12 @@
 package uz.pdp.transactionreports.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.GetExchange;
-import uz.pdp.transactionreports.dto.UserCRUDDto;
+import uz.pdp.transactionreports.dto.UserCreateReadDto;
+import uz.pdp.transactionreports.dto.UserLoginDto;
 import uz.pdp.transactionreports.dto.UserUpdateDto;
-import uz.pdp.transactionreports.entity.User;
 import uz.pdp.transactionreports.service.UserService;
 
 import java.util.UUID;
@@ -17,9 +17,13 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody UserCRUDDto user) {
-        return ResponseEntity.ok(userService.create(user));
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
+        return ResponseEntity.ok(userService.login(userLoginDto));
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserCreateReadDto user) {
+        return ResponseEntity.ok(userService.register(user));
     }
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserUpdateDto user) {

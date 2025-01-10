@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "affair")
+//     I prefer to write affair than service
 public class Affair {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

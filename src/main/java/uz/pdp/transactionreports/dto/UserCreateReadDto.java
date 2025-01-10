@@ -11,7 +11,7 @@ import uz.pdp.transactionreports.utils.enums.Role;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserCRUDDto {
+public class UserCreateReadDto {
     @NotBlank
     private String name;
     @NotBlank
@@ -21,7 +21,7 @@ public class UserCRUDDto {
     @NotNull
     private Role role;
 
-    public UserCRUDDto(User user) {
+    public UserCreateReadDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();
         this.password = user.getPassword();

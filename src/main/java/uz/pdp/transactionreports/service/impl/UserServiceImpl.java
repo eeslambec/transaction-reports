@@ -1,13 +1,20 @@
 package uz.pdp.transactionreports.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import uz.pdp.transactionreports.dto.UserCRUDDto;
+import uz.pdp.transactionreports.dto.JWTDto;
+import uz.pdp.transactionreports.dto.UserCreateReadDto;
+import uz.pdp.transactionreports.dto.UserLoginDto;
 import uz.pdp.transactionreports.dto.UserUpdateDto;
 import uz.pdp.transactionreports.entity.User;
+import uz.pdp.transactionreports.exception.AlreadyExistsException;
+import uz.pdp.transactionreports.exception.InvalidArgumentException;
 import uz.pdp.transactionreports.exception.NotFoundException;
+import uz.pdp.transactionreports.mapper.UserMapper;
 import uz.pdp.transactionreports.repository.UserRepository;
+import uz.pdp.transactionreports.security.JwtProvider;
 import uz.pdp.transactionreports.service.UserService;
 import uz.pdp.transactionreports.utils.Validations;
 import uz.pdp.transactionreports.utils.enums.UserStatus;
@@ -17,21 +24,41 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceIml implements UserService {
+public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final UserMapper userMapper;
+
     @Override
-    public User create(UserCRUDDto user) {
-        return userRepository.save(User.builder()
-                        .name(user.getName())
-                        .username(user.getUsername())
-                        .password(passwordEncoder.encode(user.getPassword()))
-                        .role(user.getRole())
-                .build());
+    public JWTDto login(UserLoginDto loginDto) {
+        User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(
+                () -> new NotFoundException("User"));
+        if (passwordEncoder.matches(loginDto.getPassword(),user.getPassword())){
+            return new JWTDto(jwtProvider.generateToken(user.getUsername()));
+        }
+        throw new InvalidArgumentException("Password");
     }
 
     @Override
-    public UserCRUDDto update(UserUpdateDto userUpdateDto) {
+    public JWTDto register(UserCreateReadDto userDto) {
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            throw new AlreadyExistsException("User");
+        }
+        /// simple regex,if I write really project I can write better
+        if (userDto.getUsername().matches("^[a-zA-Z0-9]{3,20}$") &&
+                userDto.getPassword().matches("^[a-zA-Z0-9_@]{8,}")
+        ) {
+            User entity = userMapper.toEntity(userDto);
+            entity.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            User user = userRepository.save(entity);
+            return new JWTDto(jwtProvider.generateToken(user.getUsername()));
+        }
+        throw new InvalidArgumentException("Username or Password");
+    }
+
+    @Override
+    public UserCreateReadDto update(UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(userUpdateDto.getId())
                 .orElseThrow(() -> new NotFoundException("User"));
         if (user.getStatus() != UserStatus.ACTIVE) {
@@ -40,7 +67,7 @@ public class UserServiceIml implements UserService {
         if (!userUpdateDto.getPassword().isBlank()){
             user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
         }
-        return new UserCRUDDto(userRepository.save(User.builder()
+        return new UserCreateReadDto(userRepository.save(User.builder()
                 .name(Validations.requireNonNullElse(userUpdateDto.getName(), user.getName()))
                 .username(Validations.requireNonNullElse(userUpdateDto.getUsername(), user.getUsername()))
                 .password(user.getPassword())
@@ -51,7 +78,7 @@ public class UserServiceIml implements UserService {
     @Override
     public void deleteById(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User"));
-        if (user.getStatus() != UserStatus.DELETED)
+        if (user.getStatus() == UserStatus.DELETED)
             throw new NotFoundException("User");
         user.setStatus(UserStatus.DELETED);
         userRepository.save(user);
@@ -72,18 +99,18 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public UserCRUDDto getById(UUID id) {
+    public UserCreateReadDto getById(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User"));
         if (user.getStatus() != UserStatus.ACTIVE)
             throw new NotFoundException("User");
-        return new UserCRUDDto(user);
+        return new UserCreateReadDto(user);
     }
 
     @Override
-    public UserCRUDDto getByUsername(String username) {
+    public UserCreateReadDto getByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User"));
         if (user.getStatus() != UserStatus.ACTIVE)
             throw new NotFoundException("User");
-        return new UserCRUDDto(user);
+        return new UserCreateReadDto(user);
     }
 }
