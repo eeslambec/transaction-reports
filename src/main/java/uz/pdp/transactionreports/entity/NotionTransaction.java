@@ -1,9 +1,6 @@
 package uz.pdp.transactionreports.entity;
 
-import uz.pdp.transactionreports.notion.model.Page;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public record NotionTransaction(String id,
                                 String transactionCategory,

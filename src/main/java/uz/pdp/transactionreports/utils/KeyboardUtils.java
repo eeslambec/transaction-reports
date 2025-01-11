@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,36 +43,6 @@ public class KeyboardUtils {
         return new InlineKeyboardMarkup(rows);
     }
 
-    public static InlineKeyboardMarkup categoryMarkup(List<InlineKeyboardButton> buttons) {
-        InlineKeyboardButton keyboardButton = buttons.remove(buttons.size() - 1);
-        List<List<InlineKeyboardButton>> rows = inlineMarkup(buttons).getKeyboard();
-        rows.add(List.of(keyboardButton));
-        return new InlineKeyboardMarkup(rows);
-    }
-
-    public static InlineKeyboardMarkup categoryMarkupWithCancel(List<InlineKeyboardButton> buttons) {
-        int lastIndex = buttons.size() - 1;
-        InlineKeyboardButton cancelButton = buttons.remove(lastIndex);
-        InlineKeyboardButton lastButton = buttons.remove(lastIndex - 1);
-
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        if (buttons.size() % 2 == 0) {
-            for (int i = 0; i < buttons.size(); i += 2) {
-                rows.add(List.of(buttons.get(i), buttons.get(i + 1)));
-            }
-        } else {
-            for (int i = 0; i < buttons.size() - 1; i += 2) {
-                rows.add(List.of(buttons.get(i), buttons.get(i + 1)));
-            }
-            rows.add(List.of(buttons.get(buttons.size() - 1)));
-        }
-
-        rows.add(List.of(lastButton));
-        rows.add(List.of(cancelButton));
-
-        return new InlineKeyboardMarkup(rows);
-    }
 
     public static InlineKeyboardButton inlineButton(String text, String callBack) {
         InlineKeyboardButton button = new InlineKeyboardButton();
@@ -82,12 +51,6 @@ public class KeyboardUtils {
         return button;
     }
 
-    public static InlineKeyboardButton inlineButtonWithWebApp(String text, String webAppUrl) {
-        return InlineKeyboardButton.builder()
-                .text(text)
-                .webApp(new WebAppInfo(webAppUrl))
-                .build();
-    }
 
     public static KeyboardButton button(String text, boolean contact, boolean location) {
         KeyboardButton keyboardButton = new KeyboardButton();

@@ -8,7 +8,6 @@ import uz.pdp.transactionreports.dto.UserUpdateDto;
 import uz.pdp.transactionreports.entity.User;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

@@ -11,7 +11,6 @@ import uz.pdp.transactionreports.notion.config.NotionConfigProperties;
 import uz.pdp.transactionreports.notion.model.Page;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

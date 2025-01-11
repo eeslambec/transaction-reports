@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import uz.pdp.transactionreports.entity.Attachment;
 import uz.pdp.transactionreports.entity.Transaction;
 import uz.pdp.transactionreports.utils.enums.Currency;
 import uz.pdp.transactionreports.utils.enums.TransactionCategory;

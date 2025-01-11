@@ -1,6 +1,5 @@
 package uz.pdp.transactionreports.mapper;
 
-import org.hibernate.annotations.Comment;
 import org.springframework.stereotype.Component;
 import uz.pdp.transactionreports.dto.UserCreateReadDto;
 import uz.pdp.transactionreports.entity.User;
