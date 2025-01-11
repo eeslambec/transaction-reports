@@ -1,8 +1,11 @@
 package uz.pdp.transactionreports.notion.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Getter;
+import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 
 @ConfigurationProperties("notion")
-public record NotionConfigProperties(@Value("${notion.api-url}") String apiUrl,@Value("${notion.api-version}") String apiVersion, @Value("${notion.auth-token}") String authToken,@Value("${notion.database-id}") String databaseId) {
+public record NotionConfigProperties(String apiUrl, String apiVersion, String authToken, String databaseId) {
 }

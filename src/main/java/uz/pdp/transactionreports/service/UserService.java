@@ -8,6 +8,7 @@ import uz.pdp.transactionreports.dto.UserUpdateDto;
 import uz.pdp.transactionreports.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,4 +21,5 @@ public interface UserService {
     List<User> findAll();
     UserCreateReadDto getById(UUID id);
     UserCreateReadDto getByUsername(String username);
+    UserCreateReadDto findByUsername(String username);
 }

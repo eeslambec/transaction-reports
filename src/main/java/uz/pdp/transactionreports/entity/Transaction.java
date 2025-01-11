@@ -34,6 +34,8 @@ public class Transaction {
     private Customer customer;
     private LocalDate transactionDate;
     private String description;
+    @ManyToOne
+    private Affair affair;
     @OneToOne
     private Attachment attachment;
     private TransactionStatus transactionStatus;

@@ -1,6 +1,7 @@
 package uz.pdp.transactionreports.notion.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -11,28 +12,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.pdp.transactionreports.entity.NotionTransaction;
 import uz.pdp.transactionreports.entity.Transaction;
+import uz.pdp.transactionreports.exception.InvalidArgumentException;
+import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.notion.config.NotionConfigProperties;
 import uz.pdp.transactionreports.notion.model.Database;
 import uz.pdp.transactionreports.notion.model.Page;
 
 import java.util.List;
 
+@Log4j2
 @Service
-@RequiredArgsConstructor
 public class DatabaseService {
     private final RestTemplate restTemplate;
     private final NotionConfigProperties notionConfigProperties;
-    private final Logger log = LoggerFactory.getLogger(DatabaseService.class);
+    private final String url;
 
-    private String url = notionConfigProperties.apiUrl() + "v1/databases/" + notionConfigProperties.databaseId() + "/query";
+    public DatabaseService(RestTemplate restTemplate, NotionConfigProperties notionConfigProperties) {
+        this.restTemplate = restTemplate;
+        this.notionConfigProperties = notionConfigProperties;
+        url = notionConfigProperties.apiUrl() + "/v1/databases/" + notionConfigProperties.databaseId() + "/query";
+
+    }
     public List<Page> query(String databaseId) {
-
         if (url == null || url.isEmpty()) {
-            throw new IllegalStateException("Base URL for Notion API is not configured.");
-        }
-
-        if (!url.endsWith("/")) {
-            url += "/";
+            throw new InvalidArgumentException("Base URL");
         }
 
         log.info("Querying Notion database: {}", url);
@@ -45,7 +48,7 @@ public class DatabaseService {
         );
 
         if (db.getBody() == null) {
-            throw new IllegalStateException("No response body found for database query.");
+            throw new NotFoundException("Response body");
         }
 
         return db.getBody().getPages();
@@ -59,12 +62,12 @@ public class DatabaseService {
         return new NotionTransaction(
                 transaction.getId().toString(),
                 transaction.getTransactionCategory().name(),
-                transaction.getExpenseCategory() == null ? "NOT_EXPENSE" : null, // Enum to String
+                transaction.getExpenseCategory() == null ? "NOT_EXPENSE" : null,
                 transaction.getAmount(),
                 transaction.getCurrency().name(),
-                transaction.getCustomer() != null ? transaction.getCustomer().getPhoneNumber() : null, // Handle potential null
+                transaction.getCustomer() != null ? transaction.getCustomer().getPhoneNumber() : null,
                 transaction.getDescription(),
-                transaction.getAttachment() != null ? transaction.getAttachment().getId().toString() : null, // Handle potential null
+                transaction.getAttachment() != null ? transaction.getAttachment().getId().toString() : null,
                 transaction.getTransactionStatus().name()
         );
     }

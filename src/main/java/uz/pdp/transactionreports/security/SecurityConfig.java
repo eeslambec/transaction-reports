@@ -39,7 +39,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(registry ->
-                registry.requestMatchers(DEFAULT_URL + "/user/login", DEFAULT_URL + "/user/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                registry.requestMatchers(DEFAULT_URL + "/user/login",
+                                DEFAULT_URL + "/user/register",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                        "/api/v1/telegram"
+                        ).permitAll()
                         .anyRequest().authenticated()
         );
         http.cors(c -> c.configurationSource(corsConfigurationSource()));

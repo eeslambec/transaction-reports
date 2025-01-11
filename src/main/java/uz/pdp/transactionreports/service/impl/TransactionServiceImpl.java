@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import uz.pdp.transactionreports.dto.AttachmentDto;
 import uz.pdp.transactionreports.dto.TransactionExpenseDto;
 import uz.pdp.transactionreports.dto.TransactionIncomeDto;
 import uz.pdp.transactionreports.entity.Attachment;
 import uz.pdp.transactionreports.entity.Customer;
 import uz.pdp.transactionreports.entity.Transaction;
-import uz.pdp.transactionreports.exception.InvalidArgumentException;
 import uz.pdp.transactionreports.exception.NotFoundException;
 import uz.pdp.transactionreports.mapper.AttachmentMapper;
 import uz.pdp.transactionreports.notion.service.DatabaseService;
@@ -18,6 +16,7 @@ import uz.pdp.transactionreports.repository.TransactionRepository;
 import uz.pdp.transactionreports.service.AttachmentService;
 import uz.pdp.transactionreports.service.CustomerService;
 import uz.pdp.transactionreports.service.TransactionService;
+import uz.pdp.transactionreports.utils.enums.ExpenseCategory;
 import uz.pdp.transactionreports.utils.enums.TransactionStatus;
 
 import java.time.LocalDate;
@@ -55,12 +54,12 @@ public class TransactionServiceImpl implements TransactionService {
                 .expenseCategory(null)
                 .transactionStatus(TransactionStatus.COMPLETED)
                 .build());
-        try {
-            notionService.createTransaction(saved);
-        } catch (Exception e) {
-            log.error("Failed to sync transaction to Notion: {}", saved.getId(), e);
-            throw new InvalidArgumentException("Transaction");
-        }
+//        try {
+//            notionService.createTransaction(saved);
+//        } catch (Exception e) {
+//            log.error("Failed to sync transaction to Notion: {}", saved.getId(), e);
+//            throw new InvalidArgumentException("Transaction");
+//        }
         return new TransactionIncomeDto(saved);
     }
 
@@ -74,7 +73,8 @@ public class TransactionServiceImpl implements TransactionService {
                 .description(transactionExpenseDto.getDescription())
                 .transactionDate(transactionExpenseDto.getTransactionDate())
                 .expenseCategory(transactionExpenseDto.getExpenseCategory())
-                .attachment(transactionExpenseDto.getAttachment())
+                .attachment(attachmentMapper.toEntity(
+                        attachmentService.getById(transactionExpenseDto.getAttachmentId())))
                 .transactionStatus(TransactionStatus.COMPLETED)
                 .build()));
     }
@@ -119,7 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAllIncomes() {
+    public List<TransactionIncomeDto> getAllIncomes() {
         List<Transaction> all = transactionRepository.findAll();
         List<Transaction> allIncomes = new ArrayList<>();
         for (Transaction transaction : all) {
@@ -127,11 +127,11 @@ public class TransactionServiceImpl implements TransactionService {
                     && transaction.getTransactionStatus() != TransactionStatus.DELETED)
                 allIncomes.add(transaction);
         }
-        return allIncomes;
+        return allIncomes.stream().map(TransactionIncomeDto::new).toList();
     }
 
     @Override
-    public List<Transaction> getAllExpenses() {
+    public List<TransactionExpenseDto> getAllExpenses() {
         List<Transaction> all = transactionRepository.findAll();
         List<Transaction> allExpenses = new ArrayList<>();
         for (Transaction transaction : all) {
@@ -139,6 +139,58 @@ public class TransactionServiceImpl implements TransactionService {
                     && transaction.getTransactionStatus() != TransactionStatus.DELETED)
                 allExpenses.add(transaction);
         }
-        return allExpenses;
+        return allExpenses.stream().map(TransactionExpenseDto::new).toList();
     }
+
+    @Override
+    public List<Transaction> getAll() {
+        return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> getAllByPeriod(LocalDate startDate, LocalDate endDate) {
+        List<Transaction> allByTransactionDateBetween = transactionRepository.findAllByTransactionDateBetween(startDate, endDate);
+        List<Transaction> allCompleted = new ArrayList<>();
+        for (Transaction transaction : allByTransactionDateBetween) {
+            if (transaction.getTransactionStatus() == TransactionStatus.COMPLETED)
+                allCompleted.add(transaction);
+        }
+        return allCompleted;
+    }
+
+    @Override
+    public List<TransactionExpenseDto> getAllByExpenseCategory(ExpenseCategory expenseCategory) {
+        List<Transaction> allByExpenseCategory = transactionRepository.findAllByExpenseCategory(expenseCategory);
+        List<Transaction> allCompleted = new ArrayList<>();
+        for (Transaction transaction : allByExpenseCategory) {
+            if (transaction.getTransactionStatus() == TransactionStatus.COMPLETED)
+                allCompleted.add(transaction);
+        }
+        return allCompleted.stream().map(TransactionExpenseDto::new).toList();
+    }
+
+    @Override
+    public List<TransactionIncomeDto> getAllByCustomerPhoneNumber(String phoneNumber) {
+        List<Transaction> allByCustomerPhoneNumber =
+                transactionRepository.findAllByCustomerPhoneNumber(phoneNumber);
+        List<Transaction> allCompleted = new ArrayList<>();
+        for (Transaction transaction : allByCustomerPhoneNumber) {
+            if (transaction.getTransactionStatus() == TransactionStatus.COMPLETED)
+                allCompleted.add(transaction);
+        }
+
+        return allCompleted.stream().map(TransactionIncomeDto::new).toList();
+    }
+
+    @Override
+    public List<TransactionIncomeDto> getAllByAffairName(String affairName) {
+        List<Transaction> allByAffairName = transactionRepository.findAllByAffairName(affairName);
+        List<Transaction> allCompleted = new ArrayList<>();
+        for (Transaction transaction : allByAffairName) {
+            if (transaction.getTransactionStatus() == TransactionStatus.COMPLETED)
+                allCompleted.add(transaction);
+        }
+        return allCompleted.stream().map(TransactionIncomeDto::new).toList();
+    }
+
 }

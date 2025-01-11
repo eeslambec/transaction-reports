@@ -5,13 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import uz.pdp.transactionreports.entity.Attachment;
 import uz.pdp.transactionreports.entity.Transaction;
 import uz.pdp.transactionreports.utils.enums.Currency;
 import uz.pdp.transactionreports.utils.enums.ExpenseCategory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class TransactionExpenseDto {
     @NotBlank
     private String description;
     @NotNull
-    private Attachment attachment;
+    private UUID attachmentId;
 
     public TransactionExpenseDto(Transaction transaction) {
         this.expenseCategory = transaction.getExpenseCategory();
@@ -36,6 +36,6 @@ public class TransactionExpenseDto {
         this.currency = transaction.getCurrency();
         this.transactionDate = transaction.getTransactionDate();
         this.description = transaction.getDescription();
-        this.attachment = transaction.getAttachment();
+        this.attachmentId = transaction.getAttachment().getId();
     }
 }

@@ -20,6 +20,7 @@ import uz.pdp.transactionreports.utils.Validations;
 import uz.pdp.transactionreports.utils.enums.UserStatus;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -112,5 +113,11 @@ public class UserServiceImpl implements UserService{
         if (user.getStatus() != UserStatus.ACTIVE)
             throw new NotFoundException("User");
         return new UserCreateReadDto(user);
+    }
+
+    @Override
+    public UserCreateReadDto findByUsername(String username) {
+        Optional<User> byUsername = userRepository.findByUsername(username);
+        return byUsername.map(UserCreateReadDto::new).orElseGet(UserCreateReadDto::new);
     }
 }

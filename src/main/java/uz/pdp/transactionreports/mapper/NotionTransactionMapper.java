@@ -12,56 +12,19 @@ public class NotionTransactionMapper {
     public static NotionTransaction toNotionTransaction(Page page) {
         JsonNode properties = page.getProperties();
 
-        BigDecimal transactionAmount = new BigDecimal(
-                properties.get("Transaction Amount")
-                        .get("number")
-                        .get("format")
-                        .asText()
-        );
+        BigDecimal transactionAmount = properties.has("Transaction Amount") &&
+                properties.get("Transaction Amount").has("number") &&
+                properties.get("Transaction Amount").get("number").has("format")
+                ? new BigDecimal(properties.get("Transaction Amount").get("number").get("format").asText())
+                : BigDecimal.ZERO;
 
-        String transactionCategory = properties.get("Transaction Category")
-                .get("select")
-                .get("name")
-                .asText();
-
-        String expenseCategory = properties.get("Expense Category")
-                .get("rich_text")
-                .get(0)
-                .get("text")
-                .get("content")
-                .asText();
-
-        String currency = properties.get("currency")
-                .get("rich_text")
-                .get(0)
-                .get("text")
-                .get("content")
-                .asText();
-
-        String customerPhoneNumber = properties.get("Customer Phone Number")
-                .get("phone_number")
-                .asText();
-
-        String description = properties.get("Transaction Description")
-                .get("rich_text")
-                .get(0)
-                .get("text")
-                .get("content")
-                .asText();
-
-        String attachmentId = properties.get("Attachment Id")
-                .get("rich_text")
-                .get(0)
-                .get("text")
-                .get("content")
-                .asText();
-
-        String transactionStatus = properties.get("Transaction Status")
-                .get("rich_text")
-                .get(0)
-                .get("text")
-                .get("content")
-                .asText();
+        String transactionCategory = getStringProperty(properties, "Transaction Category", "select", "name");
+        String expenseCategory = getRichTextContent(properties, "Expense Category");
+        String currency = getRichTextContent(properties, "currency");
+        String customerPhoneNumber = getStringProperty(properties, "Customer Phone Number", "phone_number", null);
+        String description = getRichTextContent(properties, "Transaction Description");
+        String attachmentId = getRichTextContent(properties, "Attachment Id");
+        String transactionStatus = getRichTextContent(properties, "Transaction Status");
 
         return new NotionTransaction(
                 page.getId(),
@@ -75,4 +38,28 @@ public class NotionTransactionMapper {
                 transactionStatus
         );
     }
+
+    private static String getRichTextContent(JsonNode properties, String key) {
+        if (properties.has(key) &&
+                properties.get(key).has("rich_text") &&
+                properties.get(key).get("rich_text").isArray() &&
+                !properties.get(key).get("rich_text").isEmpty() &&
+                properties.get(key).get("rich_text").get(0).has("text") &&
+                properties.get(key).get("rich_text").get(0).get("text").has("content")) {
+            return properties.get(key).get("rich_text").get(0).get("text").get("content").asText();
+        }
+        return ""; // Default value if the property is missing or malformed
+    }
+
+    private static String getStringProperty(JsonNode properties, String key, String nestedKey, String nestedSubKey) {
+        if (properties.has(key) && properties.get(key).has(nestedKey)) {
+            JsonNode nestedNode = properties.get(key).get(nestedKey);
+            if (nestedSubKey != null && nestedNode.has(nestedSubKey)) {
+                return nestedNode.get(nestedSubKey).asText();
+            }
+            return nestedNode.asText();
+        }
+        return ""; // Default value
+    }
+
 }

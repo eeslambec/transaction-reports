@@ -1,5 +1,6 @@
 package uz.pdp.transactionreports.security;
 
+import io.micrometer.common.lang.NonNullApi;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import uz.pdp.transactionreports.service.UserService;
 
 import java.io.IOException;
 
+@NonNullApi
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -25,6 +27,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        if (request.getServletPath().contains("register") || request.getServletPath().contains("login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         checkAuth(request, response);
 
