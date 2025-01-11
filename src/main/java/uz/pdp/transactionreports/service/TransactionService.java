@@ -25,4 +25,5 @@ public interface TransactionService {
     List<TransactionExpenseDto> getAllByExpenseCategory(ExpenseCategory expenseCategory);
     List<TransactionIncomeDto> getAllByCustomerPhoneNumber(String phoneNumber);
     List<TransactionIncomeDto> getAllByAffairName(String affairName);
+
 }

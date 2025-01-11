@@ -22,6 +22,8 @@ public enum Callback {
     BY_SERVICE_NAME("by-service-name"),
     CHANGE_PROFILE_DETAILS("change-profile-details"),
     CHANGE_PASSWORD("change-password"),
+    CHANGE_NAME("change-name"),
+    CHANGE_USERNAME("change-username"),
     PERMISSIONS("permissions"),
     ;
 

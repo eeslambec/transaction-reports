@@ -65,14 +65,18 @@ public class UserServiceImpl implements UserService{
         if (user.getStatus() != UserStatus.ACTIVE) {
             throw new NotFoundException("User");
         }
-        if (!userUpdateDto.getPassword().isBlank()){
+        if (userUpdateDto.getPassword() != null
+                && !userUpdateDto.getPassword().isEmpty()
+                && !userUpdateDto.getPassword().isBlank())
             user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
-        }
+
         return new UserCreateReadDto(userRepository.save(User.builder()
+                .id(userUpdateDto.getId())
                 .name(Validations.requireNonNullElse(userUpdateDto.getName(), user.getName()))
                 .username(Validations.requireNonNullElse(userUpdateDto.getUsername(), user.getUsername()))
                 .password(user.getPassword())
                 .role(Validations.requireNonNullElse(userUpdateDto.getRole(), user.getRole()))
+                .status(user.getStatus())
                 .build()));
     }
 
@@ -119,5 +123,11 @@ public class UserServiceImpl implements UserService{
     public UserCreateReadDto findByUsername(String username) {
         Optional<User> byUsername = userRepository.findByUsername(username);
         return byUsername.map(UserCreateReadDto::new).orElseGet(UserCreateReadDto::new);
+    }
+
+    @Override
+    public User getByUsernameWithId(String username) {
+        Optional<User> byUsername = userRepository.findByUsername(username);
+        return byUsername.orElse(null);
     }
 }

@@ -22,4 +22,5 @@ public interface UserService {
     UserCreateReadDto getById(UUID id);
     UserCreateReadDto getByUsername(String username);
     UserCreateReadDto findByUsername(String username);
+    User getByUsernameWithId(String username);
 }

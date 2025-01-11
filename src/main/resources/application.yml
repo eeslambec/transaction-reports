@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: <DB_URL>
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 1427
+    username: <USERNAME>
+    password: <PASSWORD>
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,6 +15,8 @@ jwt:
       key: SGkuIFRoaXMgaXMgc2VjcmV0IGtleSBmb3IgSldUIGZyb20gdHJhbnNhY3Rpb24tcmVwb3J0cyBwcm9qZWN0LiBCeTogZWVzbGFtYmVj
 notion:
   api-url: https://api.notion.com
-  api-version: 2022-06-28
-  database-id: 1777733443f88012b75ef60cc23d154b
-  auth-token: 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
+  api-version: <VERSION>
+  database-id: <DB_ID>
+  auth-token: <AUTH_TOKEN>
+telegram:
+  token: <BOT_TOKEN>
