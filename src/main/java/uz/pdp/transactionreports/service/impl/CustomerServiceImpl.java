@@ -38,6 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(customerUpdateDto.getId()).orElseThrow(
                 () -> new NotFoundException("Customer"));
         return customerRepository.save(Customer.builder()
+                .id(customer.getId())
                 .firstName(Validations.requireNonNullElse(customerUpdateDto.getFirstName(), customer.getFirstName()))
                 .lastName(Validations.requireNonNullElse(customerUpdateDto.getLastName(), customer.getLastName()))
                 .middleName(Validations.requireNonNullElse(customer.getMiddleName(), customer.getMiddleName()))

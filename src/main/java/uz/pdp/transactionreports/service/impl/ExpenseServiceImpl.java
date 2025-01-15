@@ -31,6 +31,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense oldExpense = expenseRepository.findById(expense.getId()).orElseThrow(
                 () -> new NotFoundException("Expense"));
         return new ExpenseDto(expenseRepository.save(Expense.builder()
+                .id(expense.getId())
                 .name(Validations.requireNonNullElse(expense.getName(), oldExpense.getName()))
                 .build()));
     }

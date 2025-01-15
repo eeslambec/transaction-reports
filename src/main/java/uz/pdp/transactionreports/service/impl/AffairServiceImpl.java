@@ -29,6 +29,7 @@ public class AffairServiceImpl implements AffairService {
         Affair oldAffair = affairRepository.findById(affair.getId()).orElseThrow(
                 () -> new NotFoundException("Affair"));
         return new AffairDto(affairRepository.save(Affair.builder()
+                .id(oldAffair.getId())
                 .name(Validations.requireNonNullElse(affair.getName(), oldAffair.getName()))
                 .build()));
     }
