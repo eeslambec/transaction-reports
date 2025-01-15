@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService{
             user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
 
         return new UserCreateReadDto(userRepository.save(User.builder()
-                .id(userUpdateDto.getId())
+                .id(user.getId())
                 .name(Validations.requireNonNullElse(userUpdateDto.getName(), user.getName()))
                 .username(Validations.requireNonNullElse(userUpdateDto.getUsername(), user.getUsername()))
                 .password(user.getPassword())
