@@ -21,7 +21,7 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "expence")
+@Table(name = "expense")
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
